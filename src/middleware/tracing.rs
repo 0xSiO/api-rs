@@ -4,15 +4,19 @@ use tower_http::{
     trace::{DefaultOnFailure, DefaultOnRequest, DefaultOnResponse, MakeSpan, TraceLayer},
 };
 use tracing::{Level, Span};
-use tracing_subscriber::EnvFilter;
+
+use crate::middleware::request_id::RequestId;
 
 #[derive(Clone, Copy)]
 pub struct CustomMakeSpan;
 
 impl<B> MakeSpan<B> for CustomMakeSpan {
     fn make_span(&mut self, request: &Request<B>) -> Span {
+        let RequestId(id) = request.extensions().get().unwrap();
+
         tracing::info_span!(
             "request",
+            %id,
             method = %request.method(),
             uri = %request.uri(),
             http_version = ?request.version(),
@@ -20,13 +24,6 @@ impl<B> MakeSpan<B> for CustomMakeSpan {
             api_version = env!("CARGO_PKG_VERSION"),
         )
     }
-}
-
-pub fn init() {
-    tracing_subscriber::fmt()
-        .pretty()
-        .with_env_filter(EnvFilter::from_default_env())
-        .init();
 }
 
 pub fn middleware() -> TraceLayer<SharedClassifier<ServerErrorsAsFailures>, CustomMakeSpan> {
