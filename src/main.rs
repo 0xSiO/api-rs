@@ -1,6 +1,5 @@
 use axum_extra::middleware::from_fn;
 use tower::ServiceBuilder;
-use tracing::*;
 use tracing_subscriber::EnvFilter;
 
 pub mod middleware;
@@ -16,13 +15,13 @@ async fn main() {
 
     let app = routing::router().layer(
         ServiceBuilder::new()
-            .layer(from_fn(middleware::request_id::middleware))
-            .layer(middleware::tracing::middleware()),
+            .layer(from_fn(middleware::request_id))
+            .layer(from_fn(middleware::trace)),
     );
 
-    info!("starting server");
-    axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
-        .serve(app.into_make_service())
-        .await
-        .unwrap();
+    let server =
+        axum::Server::bind(&"0.0.0.0:3000".parse().unwrap()).serve(app.into_make_service());
+
+    tracing::info!(addr = %server.local_addr(), "starting server");
+    server.await.unwrap();
 }
