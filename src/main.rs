@@ -2,6 +2,7 @@ use axum_extra::middleware::from_fn;
 use tower::ServiceBuilder;
 use tracing_subscriber::EnvFilter;
 
+pub mod error;
 pub mod middleware;
 pub mod routing;
 
