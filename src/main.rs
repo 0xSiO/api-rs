@@ -4,7 +4,7 @@ use tracing_subscriber::EnvFilter;
 
 pub mod error;
 pub mod middleware;
-pub mod routing;
+pub mod route;
 
 #[tokio::main]
 async fn main() {
@@ -14,7 +14,7 @@ async fn main() {
         .with_env_filter(EnvFilter::from_default_env())
         .init();
 
-    let app = routing::router().layer(
+    let app = route::router().layer(
         ServiceBuilder::new()
             .layer(from_fn(middleware::request_id))
             .layer(from_fn(middleware::trace)),
