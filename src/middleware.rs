@@ -2,7 +2,7 @@ use std::time::Instant;
 
 use axum::{
     http::{
-        header::{self, Entry, HeaderName},
+        header::{self, HeaderName},
         HeaderMap, Request,
     },
     response::IntoResponse,
@@ -31,11 +31,11 @@ pub async fn request_id<B>(mut req: Request<B>, next: Next<B>) -> impl IntoRespo
     res
 }
 
-fn remove_sensitive(map: &HeaderMap) -> HeaderMap {
+fn redact_sensitive(map: &HeaderMap) -> HeaderMap {
     let mut map = map.clone();
     for name in SENSITIVE_HEADERS {
-        if let Entry::Occupied(entry) = map.entry(name) {
-            entry.remove_entry_mult();
+        if let header::Entry::Occupied(mut entry) = map.entry(name) {
+            entry.insert_mult("[REDACTED]".parse().unwrap());
         }
     }
     map
@@ -49,16 +49,13 @@ fn remove_sensitive(map: &HeaderMap) -> HeaderMap {
     api_version = %env!("CARGO_PKG_VERSION"),
 ))]
 pub async fn trace<B>(req: Request<B>, next: Next<B>) -> impl IntoResponse {
-    info!(
-        headers = ?remove_sensitive(req.headers()),
-        "request"
-    );
+    info!(headers = ?redact_sensitive(req.headers()), "request");
     let start = Instant::now();
     let res = next.run(req).await;
     info!(
         status = res.status().as_u16(),
         duration = start.elapsed().as_millis() as usize,
-        headers = ?remove_sensitive(res.headers()),
+        headers = ?redact_sensitive(res.headers()),
         "response"
     );
     res
