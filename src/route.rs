@@ -9,7 +9,7 @@ pub fn router() -> Router {
     Router::new()
         .route("/", get(|| async { "Hello, World!" }))
         .fallback(any(|| async {
-            Error(
+            Error::new(
                 StatusCode::NOT_FOUND,
                 "The requested endpoint could not be found.",
             )

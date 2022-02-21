@@ -1,22 +1,47 @@
 use std::fmt::Display;
 
 use axum::{http::StatusCode, response::IntoResponse, Json};
-use serde_json::json;
+use serde_json::{json, Value};
 use tracing::{error, warn};
 
-// TODO: Add ability to include additional info
-pub struct Error<M: Display>(pub StatusCode, pub M);
+pub struct Error<M: Display> {
+    status: StatusCode,
+    message: M,
+    details: Option<Value>,
+}
+
+impl<M: Display> Error<M> {
+    pub fn new(status: StatusCode, message: M) -> Self {
+        Self {
+            status,
+            message,
+            details: None,
+        }
+    }
+
+    pub fn details(mut self, value: Value) -> Self {
+        self.details = Some(value);
+        self
+    }
+}
 
 impl<M: Display> IntoResponse for Error<M> {
     fn into_response(self) -> axum::response::Response {
-        if self.0.is_client_error() {
-            warn!(status = %self.0.as_u16(), description = %self.1, "client error");
+        let status = self.status.as_u16();
+        let details = self.details.unwrap_or_else(|| json!({}));
+
+        if self.status.is_client_error() {
+            warn!(%status, description = %self.message, %details, "client error");
         }
 
-        if self.0.is_server_error() {
-            error!(status = %self.0.as_u16(), description = %self.1, "server error");
+        if self.status.is_server_error() {
+            error!(%status, description = %self.message, %details, "server error");
         }
 
-        (self.0, Json(json!({ "message": format!("{}", self.1), }))).into_response()
+        (
+            self.status,
+            Json(json!({ "message": format!("{}", self.message), "details": details })),
+        )
+            .into_response()
     }
 }
