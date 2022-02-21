@@ -1,14 +1,22 @@
 use std::time::Instant;
 
 use axum::{
-    http::{header::Entry, Request},
+    http::{
+        header::{self, Entry, HeaderName},
+        HeaderMap, Request,
+    },
     response::IntoResponse,
 };
 use axum_extra::middleware::Next;
 use tracing::{info, instrument};
 use uuid::Uuid;
 
-const SENSITIVE_HEADERS: &[&str] = &["authorization"];
+const SENSITIVE_HEADERS: &[HeaderName] = &[
+    header::AUTHORIZATION,
+    header::PROXY_AUTHORIZATION,
+    header::COOKIE,
+    header::SET_COOKIE,
+];
 
 #[derive(Clone, Copy, Eq, Hash, Ord, PartialEq, PartialOrd)]
 #[repr(transparent)]
@@ -23,6 +31,16 @@ pub async fn request_id<B>(mut req: Request<B>, next: Next<B>) -> impl IntoRespo
     res
 }
 
+fn remove_sensitive(map: &HeaderMap) -> HeaderMap {
+    let mut map = map.clone();
+    for name in SENSITIVE_HEADERS {
+        if let Entry::Occupied(entry) = map.entry(name) {
+            entry.remove_entry_mult();
+        }
+    }
+    map
+}
+
 #[instrument(skip_all, fields(
     id = %req.extensions().get::<RequestId>().unwrap().0,
     method = %req.method(),
@@ -31,20 +49,16 @@ pub async fn request_id<B>(mut req: Request<B>, next: Next<B>) -> impl IntoRespo
     api_version = %env!("CARGO_PKG_VERSION"),
 ))]
 pub async fn trace<B>(req: Request<B>, next: Next<B>) -> impl IntoResponse {
-    let mut headers = req.headers().clone();
-    for &name in SENSITIVE_HEADERS {
-        if let Entry::Occupied(entry) = headers.entry(name) {
-            entry.remove_entry_mult();
-        }
-    }
-
-    info!(?headers, "request");
+    info!(
+        headers = ?remove_sensitive(req.headers()),
+        "request"
+    );
     let start = Instant::now();
     let res = next.run(req).await;
     info!(
         status = res.status().as_u16(),
         duration = start.elapsed().as_millis() as usize,
-        headers = ?res.headers(),
+        headers = ?remove_sensitive(res.headers()),
         "response"
     );
     res
