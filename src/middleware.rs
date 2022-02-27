@@ -5,9 +5,9 @@ use axum::{
         header::{self, HeaderName},
         HeaderMap, Request,
     },
+    middleware::Next,
     response::IntoResponse,
 };
-use axum_extra::middleware::Next;
 use tracing::{info, instrument};
 use uuid::Uuid;
 
@@ -42,7 +42,7 @@ fn redact_sensitive(map: &HeaderMap) -> HeaderMap {
 }
 
 #[instrument(skip_all, fields(
-    id = %req.extensions().get::<RequestId>().unwrap().0,
+    request_id = %req.extensions().get::<RequestId>().unwrap().0,
     method = %req.method(),
     path = %req.uri().path(),
     http_version = ?req.version(),

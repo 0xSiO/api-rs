@@ -1,4 +1,4 @@
-use axum_extra::middleware::from_fn;
+use axum::middleware::from_fn;
 use tower::ServiceBuilder;
 use tracing_subscriber::EnvFilter;
 
