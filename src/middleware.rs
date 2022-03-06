@@ -1,26 +1,22 @@
 use std::time::Instant;
 
 use axum::{
-    http::{
-        header::{self, HeaderName},
-        HeaderMap, Request,
-    },
+    http::{header, HeaderMap, Request},
     middleware::Next,
     response::IntoResponse,
 };
 use tracing::{info, instrument};
 use uuid::Uuid;
 
-const SENSITIVE_HEADERS: &[HeaderName] = &[
+const SENSITIVE_HEADERS: &[header::HeaderName] = &[
     header::AUTHORIZATION,
     header::PROXY_AUTHORIZATION,
     header::COOKIE,
     header::SET_COOKIE,
 ];
 
-#[derive(Clone, Copy, Eq, Hash, Ord, PartialEq, PartialOrd)]
 #[repr(transparent)]
-struct RequestId(pub Uuid);
+struct RequestId(Uuid);
 
 pub async fn request_id<B>(mut req: Request<B>, next: Next<B>) -> impl IntoResponse {
     let id = Uuid::new_v4();

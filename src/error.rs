@@ -30,20 +30,22 @@ impl<M: Display> Error<M> {
 
 impl<M: Display> IntoResponse for Error<M> {
     fn into_response(self) -> axum::response::Response {
+        let id = self.id.to_string();
         let status = self.status.as_u16();
+        let description = self.message.to_string();
         let details = self.details.unwrap_or_else(|| json!({}));
 
         if self.status.is_client_error() {
-            warn!(%status, error_id = %self.id, description = %self.message, %details, "client error");
+            warn!(%status, error_id = %id, %description, %details, "client error");
         }
 
         if self.status.is_server_error() {
-            error!(%status, error_id = %self.id, description = %self.message, %details, "server error");
+            error!(%status, error_id = %id, %description, %details, "server error");
         }
 
         (
             self.status,
-            Json(json!({ "id": format!("{}", self.id), "message": format!("{}", self.message), "details": details })),
+            Json(json!({ "id": id, "message": description, "details": details })),
         )
             .into_response()
     }
