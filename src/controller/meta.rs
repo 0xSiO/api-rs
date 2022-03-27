@@ -6,8 +6,9 @@ use crate::{service::health, State};
 
 #[instrument(skip_all)]
 pub async fn health(Extension(state): Extension<State>) -> impl IntoResponse {
+    let (database,) = tokio::join!(health::db_check(&state));
     Json(json!({
-        "database": health::db_check(&state).await,
+        "database": database,
     }))
 }
 
