@@ -1,9 +1,11 @@
 use serde_json::{json, Value};
 use sqlx::postgres::PgConnectionInfo;
 use std::time::Instant;
+use tracing::instrument;
 
 use crate::State;
 
+#[instrument(skip_all)]
 pub async fn db_check(state: &State) -> Value {
     let start = Instant::now();
 

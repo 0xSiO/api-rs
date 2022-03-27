@@ -1,6 +1,6 @@
 use axum::{http::StatusCode, response::IntoResponse, Json};
 use serde_json::{json, Value};
-use tracing::{error, warn};
+use tracing::{error, instrument, warn};
 use uuid::Uuid;
 
 // TODO: Ability to add backtrace and cause
@@ -28,6 +28,7 @@ impl Error {
 }
 
 impl IntoResponse for Error {
+    #[instrument(skip_all)]
     fn into_response(self) -> axum::response::Response {
         let error_id = self.id.to_string();
         let status = self.status.as_u16();
