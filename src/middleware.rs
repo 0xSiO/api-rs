@@ -42,7 +42,6 @@ fn redact_sensitive(map: &HeaderMap) -> HeaderMap {
     method = %req.method(),
     path = %req.uri().path(),
     http_version = ?req.version(),
-    api_version = %env!("CARGO_PKG_VERSION"),
 ))]
 pub async fn trace<B>(req: Request<B>, next: Next<B>) -> impl IntoResponse {
     info!(headers = ?redact_sensitive(req.headers()), "request");
