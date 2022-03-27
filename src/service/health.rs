@@ -1,7 +1,8 @@
 use serde_json::{json, Value};
 use sqlx::postgres::PgConnectionInfo;
 use std::time::Instant;
-use tracing::instrument;
+use tracing::{error, instrument};
+use uuid::Uuid;
 
 use crate::State;
 
@@ -19,10 +20,15 @@ pub async fn db_check(state: &State) -> Value {
             "duration": elapsed,
             "server_version": conn.server_version_num(),
         }),
-        Err(err) => json!({
-            "status": "down",
-            "duration": elapsed,
-            "error": err.to_string(),
-        }),
+        Err(error) => {
+            let error_id = Uuid::new_v4();
+            error!(%error_id, description = %error, "database health check failed");
+            json!({
+                "status": "down",
+                "duration": elapsed,
+                "error_id": error_id.to_string(),
+                "error": error.to_string(),
+            })
+        }
     }
 }
