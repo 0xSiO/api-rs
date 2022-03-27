@@ -1,23 +1,22 @@
-use std::fmt::Display;
-
 use axum::{http::StatusCode, response::IntoResponse, Json};
 use serde_json::{json, Value};
 use tracing::{error, warn};
 use uuid::Uuid;
 
-pub struct Error<M: Display> {
+// TODO: Ability to add backtrace and cause
+pub struct Error {
     id: Uuid,
     status: StatusCode,
-    message: M,
+    message: String,
     details: Option<Value>,
 }
 
-impl<M: Display> Error<M> {
-    pub fn new(status: StatusCode, message: M) -> Self {
+impl Error {
+    pub fn new(status: StatusCode, message: impl ToString) -> Self {
         Self {
             id: Uuid::new_v4(),
             status,
-            message,
+            message: message.to_string(),
             details: None,
         }
     }
@@ -28,25 +27,31 @@ impl<M: Display> Error<M> {
     }
 }
 
-impl<M: Display> IntoResponse for Error<M> {
+impl IntoResponse for Error {
     fn into_response(self) -> axum::response::Response {
-        let id = self.id.to_string();
+        let error_id = self.id.to_string();
         let status = self.status.as_u16();
-        let description = self.message.to_string();
+        let description = self.message;
         let details = self.details.unwrap_or_else(|| json!({}));
 
         if self.status.is_client_error() {
-            warn!(%status, error_id = %id, %description, %details, "client error");
+            warn!(%status, %error_id, %description, %details, "client error");
         }
 
         if self.status.is_server_error() {
-            error!(%status, error_id = %id, %description, %details, "server error");
+            error!(%status, %error_id, %description, %details, "server error");
         }
 
         (
             self.status,
-            Json(json!({ "id": id, "message": description, "details": details })),
+            Json(json!({ "id": error_id, "message": description, "details": details })),
         )
             .into_response()
+    }
+}
+
+impl<E: std::error::Error> From<E> for Error {
+    fn from(err: E) -> Self {
+        Self::new(StatusCode::INTERNAL_SERVER_ERROR, err)
     }
 }
