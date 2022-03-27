@@ -1,13 +1,14 @@
-use crate::error::Error;
 use axum::{
     http::StatusCode,
     routing::{any, get},
     Router,
 };
 
+use crate::{controller::meta, error::Error};
+
 pub fn router() -> Router {
     Router::new()
-        .route("/", get(|| async { "Hello, World!" }))
+        .route("/health", get(meta::health))
         .fallback(any(|| async {
             Error::new(
                 StatusCode::NOT_FOUND,

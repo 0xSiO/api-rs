@@ -3,12 +3,14 @@ use sqlx::PgPool;
 use tower::ServiceBuilder;
 use tracing_subscriber::EnvFilter;
 
+pub mod controller;
 pub mod error;
 pub mod middleware;
 pub mod route;
+pub mod service;
 
 #[derive(Debug, Clone)]
-struct State {
+pub struct State {
     db: PgPool,
 }
 
