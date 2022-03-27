@@ -1,12 +1,14 @@
 use serde_json::{json, Value};
-use sqlx::{postgres::PgConnectionInfo, PgPool};
+use sqlx::postgres::PgConnectionInfo;
 use std::time::Instant;
 
-pub async fn db_check(db: PgPool) -> Value {
+use crate::State;
+
+pub async fn db_check(state: &State) -> Value {
     let start = Instant::now();
 
     // This will acquire a connection and ping the DB
-    let result = db.acquire().await;
+    let result = state.db.acquire().await;
     let elapsed = start.elapsed().as_millis() as usize;
 
     match result {

@@ -5,7 +5,7 @@ use crate::{service::health, State};
 
 pub async fn health(Extension(state): Extension<State>) -> impl IntoResponse {
     Json(json!({
-        "database": health::db_check(state.db).await,
+        "database": health::db_check(&state).await,
     }))
 }
 
