@@ -3,20 +3,19 @@ use serde_json::{json, Value};
 use tracing::{error, instrument, warn};
 use uuid::Uuid;
 
-// TODO: Ability to add backtrace and cause
 pub struct Error {
     id: Uuid,
     status: StatusCode,
-    message: String,
+    inner: anyhow::Error,
     details: Option<Value>,
 }
 
 impl Error {
-    pub fn new(status: StatusCode, message: impl ToString) -> Self {
+    pub fn new(status: StatusCode, error: impl Into<anyhow::Error>) -> Self {
         Self {
             id: Uuid::new_v4(),
             status,
-            message: message.to_string(),
+            inner: error.into(),
             details: None,
         }
     }
@@ -32,15 +31,15 @@ impl IntoResponse for Error {
     fn into_response(self) -> axum::response::Response {
         let error_id = self.id.to_string();
         let status = self.status.as_u16();
-        let description = self.message;
+        let description = self.inner.to_string();
         let details = self.details.unwrap_or_else(|| json!({}));
 
         if self.status.is_client_error() {
-            warn!(%status, %error_id, %description, %details, "client error");
+            warn!(%status, %error_id, description = ?self.inner, %details, "client error");
         }
 
         if self.status.is_server_error() {
-            error!(%status, %error_id, %description, %details, "server error");
+            error!(%status, %error_id, description = ?self.inner, %details, "server error");
         }
 
         (
@@ -51,8 +50,8 @@ impl IntoResponse for Error {
     }
 }
 
-impl<E: std::error::Error> From<E> for Error {
-    fn from(err: E) -> Self {
+impl From<anyhow::Error> for Error {
+    fn from(err: anyhow::Error) -> Self {
         Self::new(StatusCode::INTERNAL_SERVER_ERROR, err)
     }
 }

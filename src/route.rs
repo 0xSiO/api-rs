@@ -1,3 +1,4 @@
+use anyhow::anyhow;
 use axum::{
     http::StatusCode,
     routing::{any, get},
@@ -13,7 +14,7 @@ pub fn router() -> Router {
         .fallback(any(|| async {
             Error::new(
                 StatusCode::NOT_FOUND,
-                "The requested endpoint could not be found.",
+                anyhow!("The requested endpoint could not be found."),
             )
         }))
 }

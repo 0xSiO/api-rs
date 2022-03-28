@@ -1,6 +1,8 @@
+use std::time::Instant;
+
+use anyhow::Context;
 use serde_json::{json, Value};
 use sqlx::postgres::PgConnectionInfo;
-use std::time::Instant;
 use tracing::{error, instrument};
 use uuid::Uuid;
 
@@ -11,7 +13,7 @@ pub async fn db_check(state: &State) -> Value {
     let start = Instant::now();
 
     // This will acquire a connection and ping the DB
-    let result = state.db.acquire().await;
+    let result = state.db.acquire().await.context("ping failed");
     let elapsed = start.elapsed().as_millis() as usize;
 
     match result {
@@ -22,7 +24,7 @@ pub async fn db_check(state: &State) -> Value {
         }),
         Err(error) => {
             let error_id = Uuid::new_v4();
-            error!(%error_id, description = %error, "database health check failed");
+            error!(%error_id, description = ?error, "database health check failed");
             json!({
                 "status": "down",
                 "duration": elapsed,
