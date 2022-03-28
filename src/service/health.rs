@@ -13,7 +13,7 @@ pub async fn db_check(state: &State) -> Value {
     let start = Instant::now();
 
     // This will acquire a connection and ping the DB
-    let result = state.db.acquire().await.context("ping failed");
+    let result = state.db.acquire().await.context("failed to get connection");
     let elapsed = start.elapsed().as_millis() as usize;
 
     match result {

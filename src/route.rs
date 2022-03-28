@@ -14,7 +14,7 @@ pub fn router() -> Router {
         .fallback(any(|| async {
             Error::new(
                 StatusCode::NOT_FOUND,
-                anyhow!("The requested endpoint could not be found."),
+                anyhow!("requested endpoint could not be found"),
             )
         }))
 }

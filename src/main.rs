@@ -1,3 +1,4 @@
+use anyhow::Context;
 use axum::{extract::Extension, middleware::from_fn};
 use sqlx::PgPool;
 use tower::ServiceBuilder;
@@ -15,7 +16,7 @@ pub struct State {
 }
 
 #[tokio::main]
-async fn main() {
+async fn main() -> anyhow::Result<()> {
     dotenv::dotenv().ok();
     tracing_subscriber::fmt()
         .pretty()
@@ -24,7 +25,7 @@ async fn main() {
 
     let db = PgPool::connect(&dotenv::var("DATABASE_URL").unwrap())
         .await
-        .unwrap();
+        .context("failed to initialize DB pool")?;
 
     let state = State { db };
 
@@ -39,5 +40,5 @@ async fn main() {
         axum::Server::bind(&"0.0.0.0:3000".parse().unwrap()).serve(app.into_make_service());
 
     tracing::info!(addr = %server.local_addr(), "starting server");
-    server.await.unwrap();
+    Ok(server.await?)
 }

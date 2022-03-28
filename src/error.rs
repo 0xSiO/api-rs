@@ -52,6 +52,9 @@ impl IntoResponse for Error {
 
 impl From<anyhow::Error> for Error {
     fn from(err: anyhow::Error) -> Self {
-        Self::new(StatusCode::INTERNAL_SERVER_ERROR, err)
+        Self::new(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            err.context("an internal error occurred"),
+        )
     }
 }
