@@ -95,3 +95,9 @@ async fn with_details() -> Error {
     .details(json!({ "time_remaining": 999999 }))
 }
 ```
+
+## License
+
+This template is available as open source under the terms of the MIT License.
+
+Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in this project by you shall be licensed as MIT, without any additional terms or conditions.
