@@ -5,10 +5,12 @@ use tower::ServiceBuilder;
 use tracing_subscriber::EnvFilter;
 
 pub mod controller;
-pub mod error;
+mod error;
 pub mod middleware;
 pub mod route;
 pub mod service;
+
+pub use error::Error;
 
 #[derive(Debug, Clone)]
 pub struct State {

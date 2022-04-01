@@ -1,7 +1,7 @@
 use anyhow::anyhow;
 use axum::{http::StatusCode, routing::any, Router};
 
-use crate::error::Error;
+use crate::Error;
 
 mod meta;
 

@@ -43,3 +43,49 @@ If non-trivial logic is required for a particular handler, extract the logic to 
 ### Examples
 - By default, the `controller::meta::health` handler calls upon the `service::health` module to perform certain health checks. The `controller::meta::version` handler is trivial, so it does not require a service module.
 - A hypothetical `controller::orders` module has a handler to calculate the shipping cost for a given `order_id`. The handler should extract the `order_id` from the request, and call a service function in the `service::orders` module, which fetches the order details from the database, performs any needed calculations, and returns the result back to the handler. The handler should then use this result to construct the final response.
+
+## Errors
+
+Use [`anyhow`](https://crates.io/crates/anyhow) to add context to your errors and `Result`s. If you are constructing an error response, you should include a final line of user-friendly context, as well as any additional details.
+
+Prefer wrapping errors with a `crate::Error`.
+
+### Examples
+```rust
+use anyhow::{anyhow, bail, Context};
+use axum::http::StatusCode;
+use serde_json::json;
+
+use crate::Error;
+
+fn make_coffee() -> anyhow::Result<()> {
+    bail!("making coffee currently unsupported")
+}
+
+async fn explicit_wrap() -> Result<impl IntoResponse, Error> {
+    let _ = make_coffee()
+        .context("failed to make coffee")
+        .map_err(|err| {
+            // Explicitly wrap the error
+            Error::new(
+                StatusCode::IM_A_TEAPOT,
+                err.context("you can't make coffee, I'm a teapot!"),
+            )
+        })?;
+    Ok(())
+}
+
+async fn implicit_wrap() -> Result<impl IntoResponse, Error> {
+    // This will return a 500 error if it is not explicitly wrapped
+    let _ = make_coffee().context("failed to make coffee")?;
+    Ok(())
+}
+
+async fn with_details() -> Error {
+    Error::new(
+        StatusCode::SERVICE_UNAVAILABLE,
+        anyhow!("service is temporarily down for maintenance"),
+    )
+    .details(json!({ "time_remaining": 999999 }))
+}
+```
