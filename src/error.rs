@@ -35,7 +35,7 @@ impl IntoResponse for Error {
         let details = self.details.unwrap_or_else(|| json!({}));
 
         if self.status.is_client_error() {
-            warn!(%status, %error_id, description = ?self.inner, %details, "client error");
+            warn!(%status, %error_id, description = %self.inner, %details, "client error");
         }
 
         if self.status.is_server_error() {
