@@ -36,15 +36,15 @@ Some of your routes might require middleware - if the middleware is specific to 
 
 ## Controllers
 
-Controllers are collections of [handlers](https://docs.rs/axum/latest/axum/handler/index.html). Your routers should ultimately point to these handlers. The main concern of the controller handlers should be to interpret/validate a request and construct a response. For anything more complex, prefer using a service module.
+Controllers are collections of [handlers](https://docs.rs/axum/latest/axum/handler/index.html). Your routers should ultimately point to these handlers. The two main concerns of the controller handlers should be to interpret/validate a request and to construct a response. Defer more complex tasks to service modules.
 
 ### Validation
 
-If validating the request for a given handler is complicated, consider breaking the steps into middleware and adding the middleware to the router for that handler.
+If validating the request for a given handler is complicated, consider breaking the steps into middleware and adding the middleware to run before the handler.
 
 ## Service Modules
 
-If non-trivial logic is required for a particular handler, extract the logic to a submodule of `src/service.rs` and call it from the handler instead.
+If non-trivial logic is required for a particular handler, extract the logic to a submodule of `src/service.rs` and call that from the handler instead.
 
 ### Examples
 - By default, the `controller::meta::health` handler calls upon the `service::health` module to perform certain health checks. The `controller::meta::version` handler is trivial, so it does not require a service module.
