@@ -2,6 +2,12 @@
 
 An opinionated template for lightweight server-side web APIs written in Rust.
 
+## Preface
+
+The goal behind this template is to produce a simple, scalable project skeleton for a typical web service.
+
+The opinions laid out below are just that - opinions. Do not take them as gospel. Make adjustments to suit the needs of your application and your team.
+
 ## Setup
 
 Use a `.env` file to store configuration locally. This is loaded by [`dotenv`](https://crates.io/crates/dotenv) upon startup. In a cloud environment, use the provider's tools to configure environment variables set during deployment.
