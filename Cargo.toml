@@ -15,4 +15,4 @@ tower = { version = "*" }
 tower-http = { version = "*", features = [] }
 tracing = { version = "*" }
 tracing-subscriber = { version = "0.3.0", features = ["env-filter"] }
-uuid = { version = "0.8.0", features = ["v4"] }
+uuid = { version = "1.0.0", features = ["v4"] }

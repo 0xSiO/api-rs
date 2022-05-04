@@ -1,4 +1,4 @@
-# rust-api
+# api-rs
 
 An opinionated template for lightweight server-side web APIs written in Rust.
 
