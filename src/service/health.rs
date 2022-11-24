@@ -2,7 +2,6 @@ use std::time::Instant;
 
 use anyhow::Context;
 use serde_json::{json, Value};
-use sqlx::postgres::PgConnectionInfo;
 use tracing::{error, instrument};
 use uuid::Uuid;
 

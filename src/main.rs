@@ -19,13 +19,13 @@ pub struct State {
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    dotenv::dotenv().ok();
+    dotenvy::dotenv().ok();
     tracing_subscriber::fmt()
         .pretty()
         .with_env_filter(EnvFilter::from_default_env())
         .init();
 
-    let db = PgPool::connect(&dotenv::var("DATABASE_URL").unwrap())
+    let db = PgPool::connect(&dotenvy::var("DATABASE_URL").unwrap())
         .await
         .context("failed to initialize DB pool")?;
 
