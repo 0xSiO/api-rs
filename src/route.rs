@@ -6,10 +6,12 @@ use crate::Error;
 mod meta;
 
 pub fn router() -> Router {
-    Router::new().merge(meta::router()).fallback(any(|| async {
-        Error::new(
-            StatusCode::NOT_FOUND,
-            anyhow!("requested endpoint could not be found"),
-        )
-    }))
+    Router::new()
+        .nest("/meta", meta::router())
+        .fallback(any(|| async {
+            Error::new(
+                StatusCode::NOT_FOUND,
+                anyhow!("requested endpoint not found"),
+            )
+        }))
 }
