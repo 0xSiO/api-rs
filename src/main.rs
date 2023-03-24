@@ -1,3 +1,5 @@
+#![forbid(unsafe_code)]
+
 use anyhow::Context;
 use axum::{extract::Extension, middleware::from_fn};
 use sqlx::PgPool;
