@@ -31,7 +31,7 @@ fn redact_sensitive(map: &HeaderMap) -> HeaderMap {
     let mut map = map.clone();
     for name in SENSITIVE_HEADERS {
         if let header::Entry::Occupied(mut entry) = map.entry(name) {
-            entry.insert_mult("[REDACTED]".parse().unwrap());
+            entry.insert("[REDACTED]".parse().unwrap());
         }
     }
     map
