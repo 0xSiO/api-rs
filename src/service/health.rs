@@ -5,10 +5,10 @@ use serde_json::{json, Value};
 use tracing::{error, instrument};
 use uuid::Uuid;
 
-use crate::State;
+use crate::AppState;
 
 #[instrument(skip_all)]
-pub async fn db_check(state: &State) -> Value {
+pub async fn db_check(state: &AppState) -> Value {
     let start = Instant::now();
 
     // This will acquire a connection and ping the DB

@@ -1,11 +1,11 @@
-use axum::{extract::Extension, response::IntoResponse, Json};
+use axum::{extract::State, response::IntoResponse, Json};
 use serde_json::json;
 use tracing::instrument;
 
-use crate::{service::health, State};
+use crate::{service::health, AppState};
 
 #[instrument(skip_all)]
-pub async fn health(Extension(state): Extension<State>) -> impl IntoResponse {
+pub async fn health(State(state): State<AppState>) -> impl IntoResponse {
     let (database,) = tokio::join!(health::db_check(&state));
     Json(json!({
         "database": database,

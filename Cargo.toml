@@ -6,12 +6,12 @@ publish = false
 
 [dependencies]
 anyhow = { version = "1.0.0", features = ["backtrace"] }
-axum = { version = "0.6.0", default-features = false, features = ["http2", "json", "tokio", "tower-log"] }
+axum = { version = "0.6.0", default-features = false, features = ["http1", "http2", "json", "tokio", "tower-log"] }
 dotenvy = { version = "0.15.0" }
 serde_json = { version = "*" }
-sqlx = { version = "0.6.0", features = ["runtime-tokio-rustls", "postgres"] }
+sqlx = { version = "0.7.0", features = ["runtime-tokio-rustls", "postgres"] }
 tokio = { version = "*", features = ["macros", "rt-multi-thread"] }
 tower = { version = "*" }
 tracing = { version = "*" }
 tracing-subscriber = { version = "0.3.0", features = ["env-filter"] }
-uuid = { version = "1.4.0", features = ["v4"] }
+uuid = { version = "1.6.0", features = ["v4"] }

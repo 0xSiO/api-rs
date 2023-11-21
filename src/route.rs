@@ -1,11 +1,11 @@
 use anyhow::anyhow;
 use axum::{http::StatusCode, routing::any, Router};
 
-use crate::Error;
+use crate::{AppState, Error};
 
 mod meta;
 
-pub fn router() -> Router {
+pub fn router() -> Router<AppState> {
     Router::new()
         .nest("/meta", meta::router())
         .fallback(any(|| async {
