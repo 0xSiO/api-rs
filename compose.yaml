@@ -1,0 +1,15 @@
+services:
+  db:
+    image: docker.io/library/postgres:latest
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+  api:
+    image: api
+    environment:
+      - RUST_LOG=info
+      - RUST_LIB_BACKTRACE=1
+      - DATABASE_URL=postgres://postgres@db:5432/postgres
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
