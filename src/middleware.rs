@@ -1,7 +1,8 @@
 use std::time::Instant;
 
 use axum::{
-    http::{header, HeaderMap, Request},
+    extract::Request,
+    http::{header, HeaderMap},
     middleware::Next,
     response::IntoResponse,
 };
@@ -15,10 +16,11 @@ const SENSITIVE_HEADERS: &[header::HeaderName] = &[
     header::SET_COOKIE,
 ];
 
+#[derive(Clone)]
 #[repr(transparent)]
 struct RequestId(Uuid);
 
-pub async fn request_id<B>(mut req: Request<B>, next: Next<B>) -> impl IntoResponse {
+pub async fn request_id(mut req: Request, next: Next) -> impl IntoResponse {
     let id = Uuid::new_v4();
     req.extensions_mut().insert(RequestId(id));
     let mut res = next.run(req).await;
@@ -43,7 +45,7 @@ fn redact_sensitive(map: &HeaderMap) -> HeaderMap {
     path = %req.uri().path(),
     http_version = ?req.version(),
 ))]
-pub async fn trace<B>(req: Request<B>, next: Next<B>) -> impl IntoResponse {
+pub async fn trace(req: Request, next: Next) -> impl IntoResponse {
     info!(headers = ?redact_sensitive(req.headers()), "request");
     let start = Instant::now();
     let res = next.run(req).await;

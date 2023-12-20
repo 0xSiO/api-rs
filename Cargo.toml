@@ -6,7 +6,7 @@ publish = false
 
 [dependencies]
 anyhow = { version = "1.0.0", features = ["backtrace"] }
-axum = { version = "0.6.0", default-features = false, features = ["http1", "http2", "json", "tokio", "tower-log"] }
+axum = { version = "0.7.0", default-features = false, features = ["http1", "http2", "json", "tokio"] }
 dotenvy = { version = "0.15.0" }
 serde_json = { version = "*" }
 sqlx = { version = "0.7.0", features = ["runtime-tokio-rustls", "postgres"] }

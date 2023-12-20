@@ -3,6 +3,7 @@
 use anyhow::Context;
 use axum::middleware::from_fn;
 use sqlx::PgPool;
+use tokio::net::TcpListener;
 
 pub mod controller;
 mod error;
@@ -37,9 +38,10 @@ async fn main() -> anyhow::Result<()> {
         )
         .with_state(AppState { db });
 
-    let server =
-        axum::Server::bind(&"0.0.0.0:3000".parse().unwrap()).serve(app.into_make_service());
+    let listener = TcpListener::bind("0.0.0.0:3000")
+        .await
+        .context("failed to bind server to local address")?;
 
-    tracing::info!(addr = %server.local_addr(), "starting server");
-    Ok(server.await?)
+    tracing::info!(addr = %listener.local_addr()?, "starting server");
+    Ok(axum::serve(listener, app).await?)
 }
