@@ -148,10 +148,8 @@ async fn with_details() -> Error {
 }
 ```
 
-## License
+## Contributing
 
-This template is available as open source under the terms of the MIT License.
-
-Unless you explicitly state otherwise, any contribution intentionally submitted
-for inclusion in this project by you shall be licensed as MIT, without any
-additional terms or conditions.
+- Contributions to this project must be submitted under the [project's license](./LICENSE).
+- Contributors to this project must attest to the [Developer Certificate of Origin](https://developercertificate.org/) by including a `Signed-off-by` statement in all commit messages.
+- All commits must have a valid digital signature.
