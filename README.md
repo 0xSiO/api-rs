@@ -5,28 +5,34 @@ An opinionated template for lightweight server-side web APIs written in Rust.
 ## Preface
 
 The goal behind this template is to produce a simple, scalable project skeleton
-for a typical web service.
+for a typical web API service.
 
 The opinions laid out below are just that - opinions. Do not take them as
 gospel. Make adjustments to suit the needs of your application and your team.
 
-## Setup
+## Configuration
 
 Use a `.env` file to store configuration locally. This is loaded by
 [`dotenvy`](https://crates.io/crates/dotenvy) upon startup. In a cloud
 environment, use the provider's tools to configure environment variables set
 during deployment.
 
+## Instrumentation
+
 Use [`tracing`](https://crates.io/crates/tracing) for instrumentation and
 structured logging. You should choose a subscriber implementation that uses a
-format suitable for your log management service (you're using a log management
-service, right?) - see the list of crates
+format suitable for your log management service - see the list of crates
 [here](https://docs.rs/tracing/latest/tracing/#related-crates).
 
+## Database
+
 Use [`sqlx`](https://crates.io/crates/sqlx) with
-[PostgreSQL](https://www.postgresql.org/) for persistence. If you must use an
-ORM, you should use [ormx](https://crates.io/crates/ormx) (simple) or
-[sea-orm](https://crates.io/crates/sea-orm) (complex).
+[PostgreSQL](https://www.postgresql.org/) for persistence. Use
+[`sqlx-cli`](https://crates.io/crates/sqlx-cli) to handle migrations. Don't be
+afraid of SQL.
+
+Place models in `src/model.rs`, and derive `sqlx::FromRow` to allow you to use
+your models with `sqlx::query_as!`.
 
 ## Routes
 
@@ -75,7 +81,7 @@ a response. Defer more complex tasks to service modules.
 
 If interpreting/validating the request or building the response involves
 behavior that can be shared across many routes, consider breaking this behavior
-into middleware and add it to run before/after each applicable handler.
+into middleware and add it before/after each applicable handler.
 
 ## Service Modules
 
@@ -88,7 +94,7 @@ a submodule of `src/service.rs` and call that from the handler instead.
   `controller::meta::version` handler is trivial, so it does not require a
   service module.
 - A hypothetical `controller::orders` module might have a handler to calculate
-  the shipping cost for a given `order_id`. The handler should extract the
+  the shipping cost for some `order_id`. The handler should extract the
   `order_id` from the request, and call a service function in the
   `service::orders` module, which fetches the order details from the database,
   performs any needed calculations, and returns the result back to the handler.

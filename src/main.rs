@@ -30,17 +30,15 @@ async fn main() -> anyhow::Result<()> {
         .await
         .context("failed to initialize DB pool")?;
 
-    let app = route::router()
-        .layer(
-            tower::ServiceBuilder::new()
-                .layer(from_fn(middleware::request_id))
-                .layer(from_fn(middleware::trace)),
-        )
-        .with_state(AppState { db });
+    let app = route::router().with_state(AppState { db }).layer(
+        tower::ServiceBuilder::new()
+            .layer(from_fn(middleware::request_id))
+            .layer(from_fn(middleware::trace)),
+    );
 
     let listener = TcpListener::bind("0.0.0.0:3000")
         .await
-        .context("failed to bind server to local address")?;
+        .context("failed to bind server to address")?;
 
     tracing::info!(addr = %listener.local_addr()?, "starting server");
     Ok(axum::serve(listener, app).await?)
