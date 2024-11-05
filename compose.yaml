@@ -7,7 +7,7 @@ services:
     image: api
     environment:
       - RUST_LOG=info
-      - RUST_LIB_BACKTRACE=1
+      - RUST_LIB_BACKTRACE=0
       - DATABASE_URL=postgres://postgres@db:5432/postgres
     ports:
       - "3000:3000"

@@ -6,7 +6,6 @@ RUN mkdir src && touch src/lib.rs && cargo build --release && rm src/lib.rs
 COPY src src
 RUN cargo build --release && strip target/release/api
 
-FROM docker.io/library/alpine:latest
-WORKDIR /app
+FROM scratch
 COPY --from=build /build/target/release/api .
 CMD ["./api"]

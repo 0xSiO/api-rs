@@ -3,7 +3,10 @@
 use anyhow::Context;
 use axum::middleware::from_fn;
 use sqlx::PgPool;
-use tokio::net::TcpListener;
+use tokio::{
+    net::TcpListener,
+    signal::{self, unix::SignalKind},
+};
 
 pub mod controller;
 mod error;
@@ -42,5 +45,17 @@ async fn main() -> anyhow::Result<()> {
         .context("failed to bind server to address")?;
 
     tracing::info!(addr = %listener.local_addr()?, "starting server");
-    Ok(axum::serve(listener, app).await?)
+    Ok(axum::serve(listener, app)
+        .with_graceful_shutdown(shutdown_signal())
+        .await?)
+}
+
+async fn shutdown_signal() {
+    let mut shutdown =
+        signal::unix::signal(SignalKind::terminate()).expect("failed to install signal handler");
+
+    tokio::select! {
+        _ = signal::ctrl_c() => {},
+        _ = shutdown.recv() => {}
+    }
 }
