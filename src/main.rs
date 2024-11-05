@@ -8,6 +8,7 @@ use tokio::net::TcpListener;
 pub mod controller;
 mod error;
 pub mod middleware;
+pub mod model;
 pub mod route;
 pub mod service;
 
