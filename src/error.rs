@@ -13,7 +13,7 @@ pub struct Error {
 impl Error {
     pub fn new(status: StatusCode, error: impl Into<anyhow::Error>) -> Self {
         Self {
-            id: Uuid::new_v4(),
+            id: Uuid::now_v7(),
             status,
             inner: error.into(),
             details: None,

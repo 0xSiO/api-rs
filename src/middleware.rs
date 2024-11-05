@@ -21,7 +21,7 @@ const SENSITIVE_HEADERS: &[header::HeaderName] = &[
 struct RequestId(Uuid);
 
 pub async fn request_id(mut req: Request, next: Next) -> impl IntoResponse {
-    let id = Uuid::new_v4();
+    let id = Uuid::now_v7();
     req.extensions_mut().insert(RequestId(id));
     let mut res = next.run(req).await;
     res.headers_mut()

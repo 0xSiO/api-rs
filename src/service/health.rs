@@ -22,7 +22,7 @@ pub async fn db_check(state: &AppState) -> Value {
             "server_version": conn.server_version_num(),
         }),
         Err(error) => {
-            let error_id = Uuid::new_v4();
+            let error_id = Uuid::now_v7();
             error!(%error_id, description = ?error, "database health check failed");
             json!({
                 "status": "down",
