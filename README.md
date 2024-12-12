@@ -25,12 +25,10 @@ format suitable for your log management service - see the list of crates
 ## Database
 
 Use [`sqlx`](https://crates.io/crates/sqlx) with
-[PostgreSQL](https://www.postgresql.org/) for persistence. Use
-[`sqlx-cli`](https://crates.io/crates/sqlx-cli) to handle migrations. Don't be
-afraid of SQL. Try to ensure your queries are checked at compile-time.
-
-Place models in `src/model.rs`, and derive `sqlx::FromRow` to allow you to use
-your models with `sqlx::query_as!`.
+[PostgreSQL](https://www.postgresql.org/) for persistence. Add models to
+`src/model.rs`, and use [`sqlx-cli`](https://crates.io/crates/sqlx-cli) to
+handle migrations. Don't be afraid of SQL. Try to ensure your queries are
+checked at compile-time.
 
 ## Routes
 
