@@ -63,7 +63,7 @@ macro_rules! impl_from_rejection {
     ($type:ty) => {
         impl From<$type> for Error {
             fn from(rej: $type) -> Self {
-                Self::new(rej.status(), anyhow::anyhow!(rej.body_text()))
+                Self::new(rej.status(), rej)
             }
         }
     };
