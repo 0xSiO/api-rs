@@ -106,7 +106,8 @@ Use [`anyhow`](https://crates.io/crates/anyhow) to add context to your errors
 and `Result`s. If you are constructing an error response, you should include a
 final line of user-friendly context, as well as any additional details.
 
-Prefer wrapping errors with a `crate::Error`.
+Wrap handler errors in a `crate::Error`. For axum extractors, wrap rejections
+using [`WithRejection`](https://docs.rs/axum-extra/latest/axum_extra/extract/struct.WithRejection.html).
 
 ### Examples
 ```rust

@@ -58,3 +58,26 @@ impl From<anyhow::Error> for Error {
         )
     }
 }
+
+macro_rules! impl_from_rejection {
+    ($type:ty) => {
+        impl From<$type> for Error {
+            fn from(rej: $type) -> Self {
+                Self::new(rej.status(), anyhow::anyhow!(rej.body_text()))
+            }
+        }
+    };
+}
+
+impl_from_rejection!(axum::extract::rejection::BytesRejection);
+impl_from_rejection!(axum::extract::rejection::ExtensionRejection);
+impl_from_rejection!(axum::extract::rejection::FailedToBufferBody);
+impl_from_rejection!(axum::extract::rejection::FormRejection);
+impl_from_rejection!(axum::extract::rejection::HostRejection);
+impl_from_rejection!(axum::extract::rejection::JsonRejection);
+impl_from_rejection!(axum::extract::rejection::NestedPathRejection);
+impl_from_rejection!(axum::extract::rejection::PathRejection);
+impl_from_rejection!(axum::extract::rejection::QueryRejection);
+impl_from_rejection!(axum::extract::rejection::RawFormRejection);
+impl_from_rejection!(axum::extract::rejection::RawPathParamsRejection);
+impl_from_rejection!(axum::extract::rejection::StringRejection);
