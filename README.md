@@ -39,8 +39,7 @@ the `Router` defined in `src/route.rs`. How you define "section" is up to you.
 You can create a new router by creating a submodule of `src/route.rs`.
 
 ### Examples
-- By default, `src/route/meta.rs` contains a router with a `/health` and a
-  `/version` endpoint.
+- See `src/route/meta.rs` and `src/route/docs.rs`.
 - A hypothetical `src/route/user.rs` might contain a router pointing to
   handlers that perform CRUD operations on user models.
 - A hypothetical `src/route/authn.rs` might contain a router pointing to
@@ -143,7 +142,16 @@ async fn with_details() -> Error {
 
 ## Documentation
 
-Coming soon.
+API documentation is maintained inside the `docs` directory, which is a
+Node.js/TypeScript project. Using the [OpenAPI
+specification](https://spec.openapis.org/oas/latest.html), write your
+documentation in `docs/openapi.ts`.
+
+Inside the `docs` directory:
+- Run `npm run build` to generate an `openapi.json`, which is used by the
+  `/docs/openapi.json` endpoint.
+- Run `npm run check` to type-check `openapi.ts` with `tsc`.
+- Run `npm run format` for format `openapi.ts` with `prettier`.
 
 ## Testing
 
