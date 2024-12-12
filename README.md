@@ -141,6 +141,14 @@ async fn with_details() -> Error {
 }
 ```
 
+## Documentation
+
+Coming soon.
+
+## Testing
+
+Coming soon.
+
 ## Contributing
 
 - Contributions to this project must be submitted under the [project's license](./LICENSE).
