@@ -1,0 +1,16 @@
+{
+  "type": "module",
+  "scripts": {
+    "build": "tsx openapi.ts > openapi.json",
+    "check": "tsc --noEmit openapi.ts",
+    "format": "prettier -w openapi.ts"
+  },
+  "dependencies": {
+    "openapi-types": "^12"
+  },
+  "devDependencies": {
+    "prettier": "^3",
+    "tsx": "^4",
+    "typescript": "^5"
+  }
+}
