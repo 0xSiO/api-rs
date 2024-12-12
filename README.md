@@ -35,17 +35,24 @@ your models with `sqlx::query_as!`.
 ## Routes
 
 Routers should be created for each "section" of your service and nested under
-the `Router` defined in `src/route.rs`. How you define "section" is up to you. 
+the `Router` defined in `src/route.rs`. How you define "section" is up to you.
+You can create a new router by creating a submodule of `src/route.rs`.
 
 ### Examples
-- By default, `src/route.rs` contains a router with a `/meta/health` and a
-  `/meta/version` endpoint.
+- By default, `src/route/meta.rs` contains a router with a `/health` and a
+  `/version` endpoint.
+- A hypothetical `src/route/user.rs` might contain a router pointing to
+  handlers that perform CRUD operations on user models.
+- A hypothetical `src/route/authn.rs` might contain a router pointing to
+  several authentication-related handlers.
 
 ## Middleware
 
-Some of your routes might require middleware -
-[define](https://docs.rs/axum/latest/axum/middleware/index.html#writing-middleware)
-your new middleware in a submodule of `src/middleware.rs`, or add directly to
+Some of your routes might require
+[middleware](https://docs.rs/axum/latest/axum/middleware/index.html#writing-middleware)
+- if the middleware is specific to a few related routes, add it to the module
+that also defines those routes. If the middleware can be shared across many
+routes, add it to a submodule of `src/middleware.rs`, or directly to
 `src/middleware.rs` if you prefer.
 
 ### Examples
