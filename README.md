@@ -4,11 +4,9 @@ An opinionated template for lightweight server-side web APIs written in Rust.
 
 ## Preface
 
-The goal behind this template is to produce a simple, scalable project skeleton
-for a typical web API service.
-
-The opinions laid out below are just that - opinions. Do not take them as
-gospel. Make adjustments to suit the needs of your application and your team.
+The goal of this template is to provide a simple, scalable project skeleton for
+a typical web API service. The opinions laid out below are not gospel. Make
+adjustments to suit the needs of your application and your team.
 
 ## Configuration
 
@@ -29,59 +27,45 @@ format suitable for your log management service - see the list of crates
 Use [`sqlx`](https://crates.io/crates/sqlx) with
 [PostgreSQL](https://www.postgresql.org/) for persistence. Use
 [`sqlx-cli`](https://crates.io/crates/sqlx-cli) to handle migrations. Don't be
-afraid of SQL.
+afraid of SQL. Try to ensure your queries are checked at compile-time.
 
 Place models in `src/model.rs`, and derive `sqlx::FromRow` to allow you to use
 your models with `sqlx::query_as!`.
 
 ## Routes
 
-Routers should be created for each "section" of your service and merged into a
-single router in `src/route.rs`. How you define "section" is up to you. You can
-create a new router by creating a submodule of `src/route.rs`.
+Routers should be created for each "section" of your service and nested under
+the `Router` defined in `src/route.rs`. How you define "section" is up to you. 
 
 ### Examples
-- By default, `src/route/meta.rs` contains a router with a `/health` and a
-  `/version` endpoint.
-- A hypothetical `src/route/user.rs` might contain a router pointing to
-  handlers that perform CRUD operations on user models.
-- A hypothetical `src/route/authn.rs` might contain a router pointing to
-  several authentication-related handlers.
+- By default, `src/route.rs` contains a router with a `/meta/health` and a
+  `/meta/version` endpoint.
 
 ## Middleware
 
-Some of your routes might require middleware - if the middleware is specific to
-a few related routes, define it in the module that also defines those routes.
-If the middleware can be shared across many routes, add it to a submodule of
-`src/middleware.rs`, or directly to `src/middleware.rs` if you prefer.
+Some of your routes might require middleware -
+[define](https://docs.rs/axum/latest/axum/middleware/index.html#writing-middleware)
+your new middleware in a submodule of `src/middleware.rs`, or add directly to
+`src/middleware.rs` if you prefer.
 
 ### Examples
 - By default, every request is instrumented using `tracing` and contains a
-  request ID stored in the request extensions. Have a look at
-  `src/middleware.rs` for details on how this works.
-- In a hypothetical `src/route/secure.rs`, one might want middleware to
-  extract/verify the value of the
-  [`Authorization`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization)
-  header. Middleware can be
-  [defined](https://docs.rs/axum/latest/axum/middleware/index.html#writing-middleware)
-  in the same file and used in the required routes.
-- Let's say you want the entire service to be behind authentication instead -
-  you could place the middleware described above in
-  `src/middleware/authorization.rs`, or perhaps in `src/middleware.rs`, and
-  include it in the middleware stack of the main router in `src/route.rs` (or
-  add it to the `ServiceBuilder` layers in `src/main.rs`).
+  request ID stored in the request extensions. See `src/middleware.rs` for
+  details on how this works.
+- If you want your middleware to apply to the entire service, you can modify
+  the `ServiceBuilder` layers in `src/main.rs`.
 
 ## Controllers
 
 Controllers are collections of
-[handlers](https://docs.rs/axum/latest/axum/handler/index.html). Your routers
-should ultimately point to these handlers. The two main concerns of the
-controller handlers should be to interpret/validate a request and to construct
-a response. Defer more complex tasks to service modules.
+[handlers](https://docs.rs/axum/latest/axum/handler/index.html). Your routes
+should ultimately point to these handlers. The two main concerns of a handler
+should be to interpret/validate a request and to construct a response. Defer
+more complex tasks to service modules.
 
 If interpreting/validating the request or building the response involves
-behavior that can be shared across many routes, consider breaking this behavior
-into middleware and add it before/after each applicable handler.
+behavior that can be shared across many routes, consider separating this
+behavior into middleware.
 
 ## Service Modules
 
@@ -107,7 +91,8 @@ and `Result`s. If you are constructing an error response, you should include a
 final line of user-friendly context, as well as any additional details.
 
 Wrap handler errors in a `crate::Error`. For axum extractors, wrap rejections
-using [`WithRejection`](https://docs.rs/axum-extra/latest/axum_extra/extract/struct.WithRejection.html).
+in a `crate::Error` using
+[`WithRejection`](https://docs.rs/axum-extra/latest/axum_extra/extract/struct.WithRejection.html).
 
 ### Examples
 ```rust

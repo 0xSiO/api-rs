@@ -1,13 +1,20 @@
 use anyhow::anyhow;
-use axum::{http::StatusCode, routing::any, Router};
+use axum::{
+    http::StatusCode,
+    routing::{any, get},
+    Router,
+};
 
-use crate::{AppState, Error};
-
-mod meta;
+use crate::{controller::meta, AppState, Error};
 
 pub fn router() -> Router<AppState> {
     Router::new()
-        .nest("/meta", meta::router())
+        .nest(
+            "/meta",
+            Router::new()
+                .route("/health", get(meta::health))
+                .route("/version", get(meta::version)),
+        )
         .fallback(any(|| async {
             Error::new(
                 StatusCode::NOT_FOUND,
