@@ -46,10 +46,11 @@ You can create a new router by creating a submodule of `src/route.rs`.
 ## Middleware
 
 Some of your routes might require
-[middleware](https://docs.rs/axum/latest/axum/middleware/index.html#writing-middleware)
-- if the middleware is specific to a few related routes, add it to the module
-that also defines those routes. If the middleware can be shared across many
-routes, add it to a submodule of `src/middleware.rs`, or directly to
+[middleware](https://docs.rs/axum/latest/axum/middleware/index.html#writing-middleware).
+
+If your middleware will be limited to a few related routes, add it to the
+module that also defines those routes. If the middleware can be shared across
+many routes, add it to a submodule of `src/middleware.rs`, or directly to
 `src/middleware.rs` if you prefer.
 
 ### Examples
@@ -87,6 +88,13 @@ a submodule of `src/service.rs` and call that from the handler instead.
   `service::orders` module, which fetches the order details from the database,
   performs any needed calculations, and returns the result back to the handler.
   The handler should then use this result to construct the final response.
+
+## Other Modules
+
+If you write modules with miscellaneous shared logic that does not interact
+with requests, responses, or databases, place them in a separate crate, named
+something like `lib` or `common`, to keep this crate focused on API-specific
+functionality.
 
 ## Errors
 
