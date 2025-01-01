@@ -71,9 +71,7 @@ macro_rules! impl_from_rejection {
 
 impl_from_rejection!(axum::extract::rejection::BytesRejection);
 impl_from_rejection!(axum::extract::rejection::ExtensionRejection);
-impl_from_rejection!(axum::extract::rejection::FailedToBufferBody);
 impl_from_rejection!(axum::extract::rejection::FormRejection);
-impl_from_rejection!(axum::extract::rejection::HostRejection);
 impl_from_rejection!(axum::extract::rejection::JsonRejection);
 impl_from_rejection!(axum::extract::rejection::NestedPathRejection);
 impl_from_rejection!(axum::extract::rejection::PathRejection);
@@ -81,3 +79,4 @@ impl_from_rejection!(axum::extract::rejection::QueryRejection);
 impl_from_rejection!(axum::extract::rejection::RawFormRejection);
 impl_from_rejection!(axum::extract::rejection::RawPathParamsRejection);
 impl_from_rejection!(axum::extract::rejection::StringRejection);
+impl_from_rejection!(axum_extra::extract::rejection::HostRejection);
