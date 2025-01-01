@@ -149,7 +149,7 @@ Inside the `docs` directory:
 - Run `npm run build` to generate an `openapi.json`, which is used by the
   `/docs/openapi.json` endpoint.
 - Run `npm run check` to type-check `openapi.ts` with `tsc`.
-- Run `npm run format` for format `openapi.ts` with `prettier`.
+- Run `npm run format` to format `openapi.ts` with `prettier`.
 
 ## Testing
 
