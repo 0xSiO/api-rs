@@ -115,26 +115,18 @@ use serde_json::json;
 use crate::Error;
 
 fn make_coffee() -> anyhow::Result<()> {
-    bail!("making coffee currently unsupported")
+    bail!("something has gone terribly wrong")
 }
 
+// Wraps the underlying error with a HTTP 418 error
 async fn explicit_wrap() -> Result<impl IntoResponse, Error> {
-    let _ = make_coffee()
-        .context("failed to make coffee")
-        .map_err(|err| {
-            // Explicitly wrap the error
-            Error::new(
-                StatusCode::IM_A_TEAPOT,
-                err.context("you can't make coffee, I'm a teapot!"),
-            )
-        })?;
-    Ok(())
+    make_coffee()
+        .map_err(|err| Error::new(StatusCode::IM_A_TEAPOT, err.context("I must be a teapot")))
 }
 
-async fn implicit_wrap() -> Result<impl IntoResponse, Error> {
-    // This will return a 500 error if it is not explicitly wrapped
-    let _ = make_coffee().context("failed to make coffee")?;
-    Ok(())
+// Responds with a HTTP 500 error if not explicitly wrapped
+async fn no_wrap() -> Result<impl IntoResponse, Error> {
+    Ok(make_coffee().context("failed to make coffee")?)
 }
 
 async fn with_details() -> Error {
