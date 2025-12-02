@@ -1,7 +1,7 @@
 use std::time::Instant;
 
 use anyhow::Context;
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use tracing::{error, instrument};
 use uuid::Uuid;
 

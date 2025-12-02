@@ -1,7 +1,7 @@
 use anyhow::Context;
 use axum::{
-    response::{Html, IntoResponse},
     Json,
+    response::{Html, IntoResponse},
 };
 use tracing::instrument;
 

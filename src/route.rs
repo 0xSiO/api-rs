@@ -1,5 +1,5 @@
 use anyhow::anyhow;
-use axum::{http::StatusCode, routing::any, Router};
+use axum::{Router, http::StatusCode, routing::any};
 
 use crate::{AppState, Error};
 

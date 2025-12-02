@@ -3,13 +3,13 @@
   "scripts": {
     "build": "tsx openapi.ts > openapi.json",
     "check": "tsc --noEmit openapi.ts",
-    "format": "prettier -w openapi.ts"
+    "lint:fix": "biome check --write"
   },
   "dependencies": {
     "openapi-types": "^12"
   },
   "devDependencies": {
-    "prettier": "^3",
+    "@biomejs/biome": "^2",
     "tsx": "^4",
     "typescript": "^5"
   }

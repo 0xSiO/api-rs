@@ -1,8 +1,8 @@
-use axum::{extract::State, response::IntoResponse, Json};
+use axum::{Json, extract::State, response::IntoResponse};
 use serde_json::json;
 use tracing::instrument;
 
-use crate::{service::health, AppState};
+use crate::{AppState, service::health};
 
 #[instrument(skip_all)]
 pub async fn health(State(state): State<AppState>) -> impl IntoResponse {
