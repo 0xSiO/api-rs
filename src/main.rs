@@ -55,7 +55,7 @@ async fn shutdown_signal() {
         signal::unix::signal(SignalKind::terminate()).expect("failed to install signal handler");
 
     tokio::select! {
-        _ = signal::ctrl_c() => {},
-        _ = shutdown.recv() => {}
+        _ = signal::ctrl_c() => {tracing::info!("stopping server")},
+        _ = shutdown.recv() => {tracing::info!("stopping server")},
     }
 }
