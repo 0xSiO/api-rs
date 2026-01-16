@@ -141,15 +141,16 @@ async fn with_details() -> Error {
 ## Documentation
 
 API documentation is maintained inside the `docs` directory, which is a
-Node.js/TypeScript project. Using the [OpenAPI
+TypeScript project. Using the [OpenAPI
 specification](https://spec.openapis.org/oas/latest.html), write your
 documentation in `docs/openapi.ts`.
 
 Inside the `docs` directory:
-- Run `npm run build` to generate an `openapi.json`, which is used by the
+- Run `bun install` to install dependencies.
+- Run `bun openapi.ts > openapi.json` to generate an `openapi.json`, which is used by the
   `/docs/openapi.json` endpoint.
-- Run `npm run check` to type-check `openapi.ts` with `tsc`.
-- Run `npm run format` to format `openapi.ts` with `prettier`.
+- Run `bun check` to type-check `openapi.ts` with `tsc`.
+- Run `bun lint:fix` to format/lint `openapi.ts` with `biome`.
 
 ## Testing
 
